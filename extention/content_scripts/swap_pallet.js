@@ -8,7 +8,7 @@ const theme = {
     border: ["rgb(220, 226, 234)", "rgb(192, 202, 216)", "rgb(168, 204, 255)", "#DCE2EA", "rgb(204, 225, 255)"],
 
     text_primary: ["#000000", "rgb(0, 0, 0)", "rgb(35, 46, 62)", "rgb(255, 255, 255)", "#FFFFFF"],
-    text_secondary: ["rgb(64, 81, 104)", "hsl(211, 24%, 34.2%)", "rgb(102, 123, 153)", "rgb(0, 89, 214)", "#405168", "#667B99", "#526580", "#A5B2C5"],
+    text_secondary: ["rgb(64, 81, 104)", "hsl(211, 24%, 34.2%)", "rgb(102, 123, 153)", "rgb(0, 89, 214)", "#405168", "#667B99", "#526580", "#A5B2C5", "rgb(135, 152, 176)"],
     
     content_warning: ["rgb(239, 242, 246)", "rgb(230, 242, 255)", "rgb(249, 250, 251)", "rgb(245, 249, 255)", "rgb(35, 46, 62)"],
     content_warning_hover: ["rgb(220, 226, 234)", "rgb(17, 24, 34)"],
@@ -42,7 +42,7 @@ const theme = {
     text_primary: ["#FFFFFF", "rgb(255, 255, 255)", "rgb(226, 231, 238)"],
     text_secondary: ["rgb(171, 184, 201)", "rgb(111, 131, 159)", "rgb(128, 181, 255)", "#6F839F", "#ABB8C9", "#8D9DB4", "#485B75"],
     
-    content_warning: ["rgb(18, 33, 54)", "rgb(34, 46, 63)", "rgb(28, 39, 54)", "rgb(18, 41, 73)"],
+    content_warning: ["rgb(18, 33, 54)", "rgb(34, 46, 63)", "rgb(28, 39, 54)", "rgb(18, 41, 73)", "rgb(7, 31, 64)"],
     content_warning_hover: ["rgb(44, 58, 78)"],
 
     butterfly: ["#0085ff"],
@@ -129,7 +129,23 @@ async function applyTheme(colorMap) {
 
     'div[style*="background-image: linear-gradient(135deg, rgb(90, 113, 250), rgb(0, 133, 255))"] { background-image: linear-gradient(0deg, var(--accent-color), var(--accent-color)) !important;}',
     'div.r-kemksi { background: var(--background-change) !important; }', // Specific override for alt text background
-  ];
+
+    cssMatch("background-image", 
+      pickedTheme.background.map(v => 
+        `linear-gradient(${v}, ${v.replace("rgb", "rgba").replace(")", ", 0.9)")} 50%, ${v.replace("rgb", "rgba").replace(")", ", 0)")} 100%)`
+      ),
+      "background-image: linear-gradient(var(--border-color-change), var(--border-color-change) 50%, transparent 100%) !important;"
+    ), //new notification bar gradient
+
+    cssMatch("background-color", 
+      pickedTheme.background.map(v => v.replace("rgb", "rgba").replace(")", ", 0.9)")), 
+      "background-color: color-mix(in srgb, var(--border-color-change) 90%, transparent) !important;"), // new notification buttons
+
+    cssMatch("background-color", 
+      pickedTheme.background.map(v => v.replace("rgb", "rgba").replace(")", ", 0.9)")), 
+      "box-shadow: inset 0 0 0 1px var(--content-warnings) !important; border-color: var(--content-warnings) !important;") //fucked up evil border so new buttons are visible
+    
+  ].filter(Boolean);
   
   const innerStyle = root + "\n" + blocks.join("\n\n");
 
